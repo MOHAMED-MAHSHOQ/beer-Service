@@ -1,43 +1,34 @@
-package com.code.lambok.model;
+package com.code.lambok.entities;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.code.lambok.model.BeerStyle;
+import jakarta.persistence.*;
 import lombok.*;
-import tools.jackson.databind.annotation.JsonDeserialize;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@JsonDeserialize(builder = Beer.BeerBuilder.class)
+@Getter
+@Setter
+@Builder
+@Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-@Data
 public class Beer {
-
-    @JsonProperty("id")
+    @Id
+    @GeneratedValue(generator = "UUID")
+    @UuidGenerator
+    @Column(length = 36, columnDefinition = "varchar", updatable = false, nullable = false)
     private UUID id;
 
-    @JsonProperty("version")
+    @Version
     private Integer version;
-
-    @JsonProperty("beerName")
     private String beerName;
-
-    @JsonProperty("beerStyle")
     private BeerStyle beerStyle;
-
-    @JsonProperty("upc")
     private String upc;
-
-    @JsonProperty("quantityOnHand")
     private Integer quantityOnHand;
-
-    @JsonProperty("price")
     private BigDecimal price;
-
     private LocalDateTime createdDate;
     private LocalDateTime updateDate;
 }
-
-

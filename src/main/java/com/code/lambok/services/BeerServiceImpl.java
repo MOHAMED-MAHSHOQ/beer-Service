@@ -22,7 +22,7 @@ public class BeerServiceImpl implements BeerService{
                 .upc("123456")
                 .price(new BigDecimal("12.99"))
                 .quantityOnHand(122)
-                .createDate(LocalDateTime.now())
+                .createdDate(LocalDateTime.now())
                 .updateDate(LocalDateTime.now())
                 .build();
 
@@ -34,7 +34,7 @@ public class BeerServiceImpl implements BeerService{
                 .upc("123456")
                 .price(new BigDecimal("11.99"))
                 .quantityOnHand(392)
-                .createDate(LocalDateTime.now())
+                .createdDate(LocalDateTime.now())
                 .updateDate(LocalDateTime.now())
                 .build();
 
@@ -46,7 +46,7 @@ public class BeerServiceImpl implements BeerService{
                 .upc("123456")
                 .price(new BigDecimal("13.99"))
                 .quantityOnHand(144)
-                .createDate(LocalDateTime.now())
+                .createdDate(LocalDateTime.now())
                 .updateDate(LocalDateTime.now())
                 .build();
 
@@ -61,8 +61,8 @@ public class BeerServiceImpl implements BeerService{
     }
 
     @Override
-    public Beer getBeerById(UUID id) {
-        return beerMap.get(id);
+    public Optional<Beer> getBeerById(UUID id) {
+        return Optional.of(beerMap.get(id));
     }
 
     @Override
@@ -75,7 +75,7 @@ public class BeerServiceImpl implements BeerService{
                 .upc(beer.getUpc())
                 .quantityOnHand(beer.getQuantityOnHand())
                 .price(beer.getPrice())
-                .createDate(LocalDateTime.now())
+                .createdDate(LocalDateTime.now())
                 .updateDate(LocalDateTime.now()).build();
 
         beerMap.put(savedBeer.getId(),savedBeer);

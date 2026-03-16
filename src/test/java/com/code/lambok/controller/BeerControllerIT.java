@@ -110,6 +110,8 @@ class BeerControllerIT {
     void deleteByIdFound(){
         Beer beer =beerRepository.findAll().getFirst();
         ResponseEntity<Void> responseEntity = beerController.deleteById(beer.getId());
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatusCode.valueOf(204));
+        assertThat(beerRepository.findById(beer.getId()).isEmpty());
 
 
     }

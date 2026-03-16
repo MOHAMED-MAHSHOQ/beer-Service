@@ -1,13 +1,13 @@
 package com.code.lambok.mapper;
 
 import com.code.lambok.entities.Beer;
-import com.code.lambok.model.BeerDto;
+import com.code.lambok.model.BeerDTO;
 import org.mapstruct.Mapper;
 
 @Mapper
 public interface BeerMapper {
-    Beer beerDtoToBeer(BeerDto dto);
+    Beer toEntity(BeerDTO dto);
 
-    BeerDto beerToBeerDto(Beer beer);
+    BeerDTO toDto(Beer beer);
 
 }

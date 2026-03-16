@@ -1,6 +1,6 @@
 package com.code.lambok.controller;
 
-import com.code.lambok.model.BeerDto;
+import com.code.lambok.model.BeerDTO;
 import com.code.lambok.services.BeerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -20,38 +20,43 @@ public class BeerController {
     public static final String BEER_PATH_ID=BEER_PATH+"/{beerId}";
 
     @GetMapping(BEER_PATH)
-    public List<BeerDto> listBeers(){
+    public List<BeerDTO> listBeers(){
         return beerService.listBeers();
     }
 
     @GetMapping(BEER_PATH_ID)
-    public BeerDto getBeerById(@PathVariable UUID beerId){
+    public BeerDTO getBeerById(@PathVariable UUID beerId){
         return beerService.getBeerById(beerId).orElseThrow(NotFoundException::new);
     }
 
     @PostMapping(BEER_PATH)
-    public ResponseEntity<Void> handlePost(@RequestBody BeerDto beerDto){
-        BeerDto savedBeerDto = beerService.saveNewBeer(beerDto);
+    public ResponseEntity<Void> handlePost(@RequestBody BeerDTO beerDto){
+        BeerDTO savedBeerDTO = beerService.saveNewBeer(beerDto);
 
         HttpHeaders headers = new HttpHeaders();
-        headers.add("location",BEER_PATH+"/"+ savedBeerDto.getId().toString());
+        headers.add("location",BEER_PATH+"/"+ savedBeerDTO.getId().toString());
         return new ResponseEntity<>(headers,HttpStatus.CREATED);
     }
 
     @PutMapping(BEER_PATH_ID)
-    public ResponseEntity<Void> updateById(@PathVariable UUID beerId,@RequestBody BeerDto beerDto){
-        beerService.updateBeerById(beerId, beerDto);
+    public ResponseEntity<Void> updateById(@PathVariable UUID beerId,@RequestBody BeerDTO beer){
+        if (beerService.updateBeerById(beerId, beer).isEmpty()){
+            throw new NotFoundException();
+        };
+
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @DeleteMapping(BEER_PATH_ID)
     public ResponseEntity<Void> deleteById(@PathVariable UUID beerId){
-        beerService.deleteById(beerId);
+        if(!beerService.deleteById(beerId)){
+            throw new NotFoundException();
+        }
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @PatchMapping(BEER_PATH_ID)
-    public ResponseEntity<Void> updateBeerPatchById(@PathVariable UUID beerId,@RequestBody BeerDto beerDto){
+    public ResponseEntity<Void> updateBeerPatchById(@PathVariable UUID beerId,@RequestBody BeerDTO beerDto){
         beerService.patchBeerById(beerId, beerDto);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

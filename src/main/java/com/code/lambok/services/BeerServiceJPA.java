@@ -1,7 +1,7 @@
 package com.code.lambok.services;
 
 import com.code.lambok.mapper.BeerMapper;
-import com.code.lambok.model.BeerDto;
+import com.code.lambok.model.BeerDTO;
 import com.code.lambok.repositories.BeerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
@@ -10,6 +10,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
+
 @Service
 @Primary
 @RequiredArgsConstructor
@@ -17,32 +20,50 @@ public class BeerServiceJPA implements BeerService {
     private final BeerRepository beerRepository;
     private final BeerMapper beerMapper;
     @Override
-    public List<BeerDto> listBeers() {
-        return List.of();
+    public List<BeerDTO> listBeers() {
+        return beerRepository.findAll().stream().map(beerMapper::toDto).collect(Collectors.toList());
     }
 
     @Override
-    public Optional<BeerDto> getBeerById(UUID id) {
-        return Optional.empty();
+    public Optional<BeerDTO> getBeerById(UUID id) {
+        return Optional.ofNullable(beerMapper.toDto(beerRepository.findById(id).orElse(null)));
     }
 
     @Override
-    public BeerDto saveNewBeer(BeerDto beerDto) {
-        return null;
+    public BeerDTO saveNewBeer(BeerDTO beerDto) {
+        return beerMapper.toDto(beerRepository.save(beerMapper.toEntity(beerDto)));
     }
 
     @Override
-    public void updateBeerById(UUID beerId, BeerDto beerDto) {
+    public Optional<BeerDTO> updateBeerById(UUID beerId, BeerDTO beer) {
+        AtomicReference<Optional<BeerDTO>> atomicReference = new AtomicReference<>();
+
+        beerRepository.findById(beerId).ifPresentOrElse(foundBeer -> {
+            foundBeer.setBeerName(beer.getBeerName());
+            foundBeer.setBeerStyle(beer.getBeerStyle());
+            foundBeer.setUpc(beer.getUpc());
+            foundBeer.setPrice(beer.getPrice());
+            atomicReference.set(Optional.of(beerMapper
+                    .toDto(beerRepository.save(foundBeer))));
+        }, () -> {
+            atomicReference.set(Optional.empty());
+        });
+
+        return atomicReference.get();
 
     }
 
     @Override
-    public void deleteById(UUID beerId) {
-
+    public boolean deleteById(UUID beerId) {
+        if (beerRepository.existsById(beerId)){
+        beerRepository.deleteById(beerId);
+        return true;
+        }
+        return false;
     }
 
     @Override
-    public void patchBeerById(UUID beerId, BeerDto beerDto) {
+    public void patchBeerById(UUID beerId, BeerDTO beerDto) {
 
     }
 }

@@ -30,7 +30,7 @@
     import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
     import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-    @WebMvcTest
+    @WebMvcTest(BeerController.class)   // ← specify exactly which controller
     @ExtendWith(MockitoExtension.class)
     public class BeerControllerTest {
         @Autowired

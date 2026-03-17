@@ -105,6 +105,13 @@ class BeerControllerIT {
     }
 
     @Test
+    void testDeleteByIDNotFound(){
+        assertThrows(NotFoundException.class,()->{
+            beerController.deleteById(UUID.randomUUID());
+        });
+    }
+
+    @Test
     @Transactional
     @Rollback
     void deleteByIdFound(){

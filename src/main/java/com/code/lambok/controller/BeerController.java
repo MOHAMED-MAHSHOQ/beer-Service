@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,7 +31,7 @@ public class BeerController {
     }
 
     @PostMapping(BEER_PATH)
-    public ResponseEntity<Void> handlePost(@RequestBody BeerDTO beerDto){
+    public ResponseEntity<Void> handlePost(@RequestBody @Validated BeerDTO beerDto){
         BeerDTO savedBeerDTO = beerService.saveNewBeer(beerDto);
 
         HttpHeaders headers = new HttpHeaders();

@@ -14,6 +14,7 @@
     import org.springframework.http.MediaType;
     import org.springframework.test.context.bean.override.mockito.MockitoBean;
     import org.springframework.test.web.servlet.MockMvc;
+    import org.springframework.test.web.servlet.MvcResult;
     import tools.jackson.databind.ObjectMapper;
 
     import java.util.HashMap;
@@ -146,5 +147,24 @@
             assertThat(beerMap.get("beerName"))
                     .isEqualTo(beerArgumentCaptor.getValue().getBeerName());
         }
+
+        @Test
+        void testCreateBeerNullBeerName() throws Exception {
+            BeerDTO beer = BeerDTO.builder().build();
+
+            given(beerService.saveNewBeer(any(BeerDTO.class))).willReturn(beerServiceimpl.listBeers().getFirst());
+
+            MvcResult mvcResult= mockMvc.perform(post(BeerController.BEER_PATH)
+                    .accept(MediaType.APPLICATION_JSON)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(beer)))
+
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.length()",is(2))).andReturn();
+            System.out.println(mvcResult.getResponse().getContentAsString());
+
+
+        }
+
 
     }

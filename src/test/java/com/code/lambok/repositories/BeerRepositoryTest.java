@@ -1,11 +1,16 @@
 package com.code.lambok.repositories;
 
 import com.code.lambok.entities.Beer;
+import com.code.lambok.model.BeerStyle;
+import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 
+import java.math.BigDecimal;
+
 import static org.assertj.core.api.Java6Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DataJpaTest
 class BeerRepositoryTest {
@@ -16,10 +21,27 @@ class BeerRepositoryTest {
     void testSaveBeer(){
         Beer savedBeer = beerRepository.save(Beer.builder()
                         .beerName("My Beer")
-                .build());
-
+                        .beerStyle(BeerStyle.PALE_ALE)
+                        .upc("234234234234")
+                        .price(new BigDecimal("11.99"))
+                        .build());
+        beerRepository.flush();
         assertThat(savedBeer).isNotNull();
         assertThat(savedBeer.getId()).isNotNull();
+    }
+
+    @Test
+    void testSaveBeerNameTooLong(){
+        assertThrows(ConstraintViolationException.class, () -> {
+            Beer savedBeer = beerRepository.save(Beer.builder()
+                    .beerName("My Beer 0123345678901233456789012334567890123345678901233456789012334567890123345678901233456789")
+                    .beerStyle(BeerStyle.PALE_ALE)
+                    .upc("234234234234")
+                    .price(new BigDecimal("11.99"))
+                    .build());
+
+            beerRepository.flush();
+        });
     }
 
 }

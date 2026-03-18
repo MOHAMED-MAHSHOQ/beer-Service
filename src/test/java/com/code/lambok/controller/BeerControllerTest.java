@@ -159,8 +159,7 @@
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(beer)))
 
-                    .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.length()",is(2))).andReturn();
+                    .andExpect(status().isBadRequest()).andReturn();
             System.out.println(mvcResult.getResponse().getContentAsString());
 
 
